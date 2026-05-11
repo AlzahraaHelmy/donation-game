@@ -8,7 +8,7 @@ function send() {
 
   let amount = Math.floor(Math.random() * 500) + 10;
 
-  fetch("PUT_YOUR_LINK_HERE", {
+  fetch("https://script.google.com/macros/s/AKfycbzc96mKHqHWUZIK5ZxiAL5ZCetCQ73_2-UHbQM-_Y1iTojCtuQEXuOHdEqBmhyx6Ckmdw/exec", {
     method: "POST",
     body: JSON.stringify({
       name: name,
