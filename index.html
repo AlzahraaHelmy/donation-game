@@ -170,6 +170,21 @@ function updateUI() {
 }
 
 updateUI();
+  function saveToGoogleSheets(name, amount) {
+    const url = "https://script.google.com/macros/s/AKfycbyp7pZfOVMf58eAwMBMy72mG-MW6pP4QH62SQId03Cqf8C-fZpTSaD4qDswZDyf0LxgEw/exec"; 
+
+    fetch(url, {
+        method: "POST",
+        mode: "no-cors", 
+        cache: "no-cache",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name: name, amount: amount })
+    })
+    .then(() => console.log("تم الإرسال بنجاح ✅"))
+    .catch(error => console.error("خطأ في الإرسال ❌:", error));
+}  
 </script>
 </body>
 </html>
