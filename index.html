@@ -1,15 +1,451 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
 <head>
-  <title>لعبة العجلة</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>حملة الأضاحي 🎡</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Cairo',sans-serif;
+}
+
+body{
+background:
+linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,.75)),
+url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1400&auto=format&fit=crop');
+background-size:cover;
+background-position:center;
+min-height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+padding:20px;
+overflow:hidden;
+}
+
+.container{
+width:100%;
+max-width:1200px;
+display:grid;
+grid-template-columns:300px 1fr 300px;
+gap:25px;
+align-items:center;
+}
+
+.card{
+background:rgba(0,0,0,.45);
+backdrop-filter:blur(8px);
+border:1px solid rgba(255,255,255,.15);
+border-radius:25px;
+padding:20px;
+color:white;
+box-shadow:0 10px 30px rgba(0,0,0,.4);
+}
+
+.title{
+font-size:58px;
+font-weight:900;
+color:#ffd700;
+text-align:center;
+margin-bottom:10px;
+text-shadow:0 0 15px rgba(255,215,0,.6);
+}
+
+.sub{
+text-align:center;
+font-size:20px;
+margin-bottom:20px;
+color:#fff;
+}
+
+.wheel-box{
+display:flex;
+flex-direction:column;
+align-items:center;
+position:relative;
+}
+
+.pointer{
+width:0;
+height:0;
+border-left:25px solid transparent;
+border-right:25px solid transparent;
+border-top:50px solid gold;
+position:absolute;
+top:-10px;
+z-index:10;
+filter:drop-shadow(0 0 10px gold);
+}
+
+#wheel{
+width:500px;
+height:500px;
+border-radius:50%;
+border:14px solid gold;
+box-shadow:
+0 0 30px rgba(255,215,0,.7),
+0 0 80px rgba(255,215,0,.3);
+transition:transform 5s cubic-bezier(.17,.67,.12,.99);
+background:white;
+}
+
+.center-circle{
+position:absolute;
+width:120px;
+height:120px;
+background:gold;
+border-radius:50%;
+display:flex;
+justify-content:center;
+align-items:center;
+font-size:28px;
+font-weight:900;
+color:#222;
+box-shadow:0 0 20px rgba(255,215,0,.8);
+}
+
+input{
+width:100%;
+padding:16px;
+border:none;
+border-radius:15px;
+font-size:18px;
+margin-top:20px;
+outline:none;
+}
+
+button{
+margin-top:15px;
+width:100%;
+padding:16px;
+border:none;
+border-radius:15px;
+font-size:22px;
+font-weight:bold;
+cursor:pointer;
+background:linear-gradient(45deg,#00c853,#64dd17);
+color:white;
+transition:.3s;
+box-shadow:0 5px 20px rgba(0,255,100,.4);
+}
+
+button:hover{
+transform:scale(1.03);
+}
+
+.result{
+margin-top:20px;
+font-size:30px;
+font-weight:900;
+color:#ffd700;
+text-align:center;
+min-height:50px;
+}
+
+.list-title{
+font-size:28px;
+margin-bottom:15px;
+color:#ffd700;
+text-align:center;
+}
+
+#leaderboard{
+width:100%;
+border-collapse:collapse;
+color:white;
+}
+
+#leaderboard td{
+padding:12px;
+border-bottom:1px solid rgba(255,255,255,.15);
+font-size:18px;
+}
+
+.badge{
+background:gold;
+color:#222;
+padding:3px 10px;
+border-radius:10px;
+font-weight:bold;
+}
+
+.quote{
+font-size:24px;
+line-height:1.8;
+text-align:center;
+color:#fff;
+}
+
+.total{
+font-size:40px;
+font-weight:900;
+text-align:center;
+color:#ffd700;
+margin-top:20px;
+}
+
+.footer{
+position:fixed;
+bottom:10px;
+left:0;
+right:0;
+text-align:center;
+color:white;
+font-size:18px;
+}
+
+@media(max-width:1000px){
+.container{
+grid-template-columns:1fr;
+}
+
+#wheel{
+width:340px;
+height:340px;
+}
+}
+</style>
 </head>
+
 <body>
 
-<h2>🎡 عجلة التبرعات</h2>
+<audio id="spinSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a8f3b2.mp3?filename=spin-wheel-14279.mp3"></audio>
 
-<input id="name" placeholder="اسمك">
-<button onclick="send()">إرسال</button>
+<div class="container">
 
-<script src="script.js"></script>
+<div class="card">
+<div class="list-title">🏆 أكثر المساهمين</div>
+
+<table id="leaderboard">
+<tbody></tbody>
+</table>
+
+<div class="total" id="totalDonations">
+0 جنيه
+</div>
+</div>
+
+<div class="wheel-box">
+
+<div class="title">حملة الأضاحي 🐑</div>
+
+<div class="sub">
+ساهم بصدقة واربح أجرًا مضاعفًا ❤️
+</div>
+
+<div class="pointer"></div>
+
+<canvas id="wheel" width="500" height="500"></canvas>
+
+<div class="center-circle">
+لف الحظ
+</div>
+
+<input id="name" placeholder="اكتب اسمك">
+
+<button onclick="spinWheel()">
+🎡 لف العجلة
+</button>
+
+<div class="result" id="result"></div>
+
+</div>
+
+<div class="card">
+
+<div class="quote">
+قال رسول الله ﷺ
+<br><br>
+"ما نقصت صدقة من مال" ❤️
+</div>
+
+<br><br>
+
+<div class="quote">
+كل لفة = صدقة جارية 🤲
+</div>
+
+</div>
+
+</div>
+
+<div class="footer">
+❤️ شكراً لمساهمتك في حملة الأضاحي المباركة ❤️
+</div>
+
+<script>
+const canvas = document.getElementById("wheel");
+const ctx = canvas.getContext("2d");
+
+const spinSound = document.getElementById("spinSound");
+
+const sectors = [
+{ value:10, color:"#1565c0", weight:1 },
+{ value:20, color:"#2e7d32", weight:3 },
+{ value:30, color:"#8e24aa", weight:4 },
+{ value:40, color:"#ef6c00", weight:4 },
+{ value:50, color:"#c62828", weight:5 },
+];
+
+let rotation = 0;
+let spinning = false;
+let players = [];
+let total = 0;
+
+function weightedRandom(){
+let pool=[];
+
+sectors.forEach((s,index)=>{
+for(let i=0;i<s.weight;i++){
+pool.push(index);
+}
+});
+
+return pool[Math.floor(Math.random()*pool.length)];
+}
+
+function drawWheel(){
+
+const arc = (2*Math.PI)/sectors.length;
+
+for(let i=0;i<sectors.length;i++){
+
+const angle = i*arc;
+
+ctx.beginPath();
+ctx.fillStyle = sectors[i].color;
+
+ctx.moveTo(250,250);
+ctx.arc(250,250,250,angle,angle+arc);
+ctx.fill();
+
+ctx.save();
+
+ctx.translate(250,250);
+ctx.rotate(angle + arc/2);
+
+ctx.fillStyle="white";
+ctx.font="bold 35px Cairo";
+ctx.textAlign="right";
+
+ctx.fillText(
+sectors[i].value + " جنيه",
+210,
+10
+);
+
+ctx.restore();
+}
+}
+
+drawWheel();
+
+function spinWheel(){
+
+if(spinning) return;
+
+const name = document.getElementById("name").value;
+
+if(!name){
+alert("اكتب اسمك ❤️");
+return;
+}
+
+spinning=true;
+
+spinSound.currentTime=0;
+spinSound.play();
+
+const index = weightedRandom();
+
+const arc = 360/sectors.length;
+
+const target =
+360*8 + (360 - index*arc - arc/2);
+
+rotation += target;
+
+canvas.style.transform=`rotate(${rotation}deg)`;
+
+setTimeout(()=>{
+
+spinSound.pause();
+
+const prize = sectors[index].value;
+
+document.getElementById("result").innerHTML=
+`🎉 مبروك ${name}<br>ساهمت بـ ${prize} جنيه ❤️`;
+
+players.push({
+name,
+prize
+});
+
+total += prize;
+
+updateBoard();
+
+confetti({
+particleCount:200,
+spread:120,
+origin:{ y:.6 }
+});
+
+saveToGoogleSheets(name,prize);
+
+spinning=false;
+
+},5000);
+}
+
+function updateBoard(){
+
+const tbody =
+document.querySelector("#leaderboard tbody");
+
+tbody.innerHTML="";
+
+players
+.sort((a,b)=>b.prize-a.prize)
+.forEach((p,i)=>{
+
+const row = tbody.insertRow();
+
+row.insertCell(0).innerHTML=
+`<span class="badge">#${i+1}</span>`;
+
+row.insertCell(1).innerText=p.name;
+
+row.insertCell(2).innerText=
+p.prize+" جنيه";
+
+});
+
+document.getElementById("totalDonations")
+.innerText =
+total + " جنيه";
+}
+
+function saveToGoogleSheets(name,amount){
+
+fetch("https://script.google.com/macros/s/AKfycbyp7pZfOVMf58eAwMBMy72mG-MW6pP4QH62SQId03Cqf8C-fZpTSaD4qDswZDyf0LxgEw/exec",{
+method:"POST",
+body:JSON.stringify({
+name:name,
+amount:amount
+})
+});
+
+}
+</script>
+
 </body>
 </html>
