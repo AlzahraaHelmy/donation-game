@@ -1,257 +1,175 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>حملة الأضاحي 🎡</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
-<style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo',sans-serif}
-
-body{
-background:linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,.75)),
-url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1400&auto=format&fit=crop');
-background-size:cover;
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-padding:20px;
-overflow:hidden;
-}
-
-.container{
-width:100%;
-max-width:1200px;
-display:grid;
-grid-template-columns:300px 1fr 300px;
-gap:25px;
-align-items:center;
-}
-
-.card{
-background:rgba(0,0,0,.45);
-backdrop-filter:blur(8px);
-border-radius:25px;
-padding:20px;
-color:white;
-}
-
-.title{
-font-size:50px;
-font-weight:900;
-color:#ffd700;
-text-align:center;
-}
-
-.wheel-box{display:flex;flex-direction:column;align-items:center;position:relative}
-
-.pointer{
-width:0;height:0;
-border-left:20px solid transparent;
-border-right:20px solid transparent;
-border-top:40px solid gold;
-position:absolute;
-top:-10px;
-}
-
-#wheel{
-width:450px;
-height:450px;
-border-radius:50%;
-border:12px solid gold;
-transition:transform 5s cubic-bezier(.17,.67,.12,.99);
-}
-
-.center-circle{
-position:absolute;
-width:110px;height:110px;
-background:gold;
-border-radius:50%;
-display:flex;
-justify-content:center;
-align-items:center;
-font-weight:900;
-}
-
-input,button{
-width:100%;
-padding:14px;
-border-radius:12px;
-margin-top:10px;
-border:none;
-font-size:18px;
-}
-
-button{
-background:linear-gradient(45deg,#00c853,#64dd17);
-color:white;
-font-weight:bold;
-cursor:pointer;
-}
-
-.result{
-margin-top:15px;
-font-size:24px;
-text-align:center;
-color:#ffd700;
-}
-
-#leaderboard td{
-padding:10px;
-border-bottom:1px solid rgba(255,255,255,.2);
-}
-
-.badge{background:gold;color:#000;padding:2px 8px;border-radius:8px}
-
-.footer{
-position:fixed;
-bottom:10px;
-text-align:center;
-width:100%;
-color:white;
-}
-</style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>حملة الأضاحي 🎡</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Cairo',sans-serif}
+        body{
+            background:linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,.75)),
+            url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1400&auto=format&fit=crop');
+            background-size:cover; min-height:100vh; display:flex; justify-content:center; align-items:center; padding:20px; overflow-x:hidden;
+        }
+        .container{ width:100%; max-width:1200px; display:grid; grid-template-columns:300px 1fr 300px; gap:25px; align-items:start; }
+        .card{ background:rgba(0,0,0,.45); backdrop-filter:blur(8px); border-radius:25px; padding:20px; color:white; border:1px solid rgba(255,215,0,0.3); }
+        .title{ font-size:40px; font-weight:900; color:#ffd700; text-align:center; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        .wheel-box{ display:flex; flex-direction:column; align-items:center; position:relative; }
+        .pointer{ width:0; height:0; border-left:20px solid transparent; border-right:20px solid transparent; border-top:40px solid #ffd700; position:absolute; top:-10px; z-index:10; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5)); }
+        #wheel{ width:450px; height:450px; border-radius:50%; border:12px solid #ffd700; transition: transform 5s cubic-bezier(0.15, 0, 0.15, 1); box-shadow: 0 0 50px rgba(255,215,0,0.2); }
+        .center-circle{ position:absolute; width:80px; height:80px; background:#ffd700; border-radius:50%; top: 225px; transform: translateY(-50%); display:flex; justify-content:center; align-items:center; font-weight:900; color:#000; box-shadow: 0 0 15px rgba(0,0,0,0.3); z-index: 5; pointer-events: none; }
+        input,button{ width:100%; padding:14px; border-radius:12px; margin-top:15px; border:none; font-size:18px; outline: none; }
+        button{ background:linear-gradient(45deg,#00c853,#64dd17); color:white; font-weight:bold; cursor:pointer; transition: 0.3s; }
+        button:hover{ transform: scale(1.02); filter: brightness(1.1); }
+        button:disabled{ background: #555; cursor: not-allowed; }
+        .result{ margin-top:15px; font-size:24px; text-align:center; color:#ffd700; min-height: 36px; }
+        #leaderboard td{ padding:10px; border-bottom:1px solid rgba(255,255,255,.1); }
+        .badge{ background:#ffd700; color:#000; padding:2px 8px; border-radius:8px; font-weight: bold; }
+        #total { color: #64dd17; font-size: 28px; text-align: center; margin-top: 10px; }
+        @media (max-width: 1000px) { .container { grid-template-columns: 1fr; } .card { order: 2; } .wheel-box { order: 1; } #wheel { width: 320px; height: 320px; } .center-circle { top: 195px; } }
+    </style>
 </head>
-
 <body>
 
 <audio id="spinSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a8f3b2.mp3"></audio>
 
 <div class="container">
+    <div class="card">
+        <h3 style="text-align:center;color:#ffd700; margin-bottom:15px;">🏆 المتصدرين</h3>
+        <table id="leaderboard" style="width:100%"><tbody></tbody></table>
+        <hr style="margin:15px 0; opacity:0.2">
+        <h4 style="text-align:center">إجمالي التبرعات:</h4>
+        <div id="total">0 جنيه</div>
+    </div>
 
-<div class="card">
-<h3 style="text-align:center;color:gold">🏆 المتصدرين</h3>
-<table id="leaderboard"><tbody></tbody></table>
-<h2 id="total">0 جنيه</h2>
+    <div class="wheel-box">
+        <div class="title">حملة الأضاحي 🐑</div>
+        <div class="pointer"></div>
+        <canvas id="wheel" width="450" height="450"></canvas>
+        <div class="center-circle">حظ سعيد</div>
+        
+        <div style="width: 100%; max-width: 400px;">
+            <input id="name" placeholder="اكتب اسمك هنا...">
+            <button id="spinBtn" onclick="spinWheel()">🎡 لف العجلة</button>
+            <div class="result" id="result"></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <p style="text-align:center; line-height:1.6">
+            "ما نقصت صدقة من مال ❤️"<br><br>
+            ساهم معنا في إدخال السرور على المحتاجين في عيد الأضحى المبارك.
+        </p>
+    </div>
 </div>
-
-<div class="wheel-box">
-<div class="title">حملة الأضاحي 🐑</div>
-<div class="pointer"></div>
-
-<canvas id="wheel" width="450" height="450"></canvas>
-
-<div class="center-circle">لف الحظ</div>
-
-<input id="name" placeholder="اكتب اسمك">
-<button onclick="spinWheel()">🎡 لف العجلة</button>
-
-<div class="result" id="result"></div>
-</div>
-
-<div class="card">
-<p style="text-align:center">"ما نقصت صدقة من مال ❤️"</p>
-</div>
-
-</div>
-
-<div class="footer">❤️ شكراً لمساهمتك</div>
 
 <script>
 const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
+const spinBtn = document.getElementById("spinBtn");
 
 const sectors = [
-{v:10,color:"#1565c0"},
-{v:20,color:"#2e7d32"},
-{v:30,color:"#8e24aa"},
-{v:40,color:"#ef6c00"},
-{v:50,color:"#c62828"}
+    {v:10, color:"#1565c0"},
+    {v:20, color:"#2e7d32"},
+    {v:30, color:"#8e24aa"},
+    {v:40, color:"#ef6c00"},
+    {v:50, color:"#c62828"}
 ];
 
-let rotation = 0;
+let currentRotation = 0;
 let spinning = false;
 let players = JSON.parse(localStorage.getItem("players")) || [];
-let total = players.reduce((a,b)=>a+b.prize,0);
 
-function draw(){
-const arc = (2*Math.PI)/sectors.length;
-for(let i=0;i<sectors.length;i++){
-ctx.beginPath();
-ctx.fillStyle=sectors[i].color;
-ctx.moveTo(225,225);
-ctx.arc(225,225,225,i*arc,(i+1)*arc);
-ctx.fill();
+function draw() {
+    const arc = (2 * Math.PI) / sectors.length;
+    ctx.clearRect(0, 0, 450, 450);
+    for(let i = 0; i < sectors.length; i++) {
+        ctx.beginPath();
+        ctx.fillStyle = sectors[i].color;
+        ctx.moveTo(225, 225);
+        ctx.arc(225, 225, 225, i * arc, (i + 1) * arc);
+        ctx.fill();
 
-ctx.save();
-ctx.translate(225,225);
-ctx.rotate(i*arc+arc/2);
-ctx.fillStyle="white";
-ctx.font="bold 28px Cairo";
-ctx.fillText(sectors[i].v+"ج",160,10);
-ctx.restore();
-}
+        ctx.save();
+        ctx.translate(225, 225);
+        ctx.rotate(i * arc + arc / 2);
+        ctx.fillStyle = "white";
+        ctx.font = "bold 24px Cairo";
+        ctx.textAlign = "right";
+        ctx.fillText(sectors[i].v + " ج", 180, 10);
+        ctx.restore();
+    }
 }
 draw();
 
-function spinWheel(){
-if(spinning) return;
+function spinWheel() {
+    if (spinning) return;
+    const nameInput = document.getElementById("name");
+    const name = nameInput.value.trim();
+    
+    if (!name) {
+        alert("يرجى إدخال الاسم للمشاركة!");
+        return;
+    }
 
-const name=document.getElementById("name").value;
-if(!name) return alert("اكتب اسمك");
+    spinning = true;
+    spinBtn.disabled = true;
+    document.getElementById("result").innerText = "جاري السحب...";
 
-spinning=true;
+    // اختيار عشوائي للقطاع
+    const prizeIndex = Math.floor(Math.random() * sectors.length);
+    const sectorAngle = 360 / sectors.length;
+    
+    // حساب زاوية التوقف (عكس اتجاه عقارب الساعة لأن 0 تبدأ من اليمين)
+    // نطرح 90 لأن السهم في الأعلى
+    const stopAngle = (360 - (prizeIndex * sectorAngle)) - (sectorAngle / 2) + 90;
+    
+    // إضافة 5 دورات كاملة + الزاوية المطلوبة
+    currentRotation += (360 * 5) + (stopAngle - (currentRotation % 360));
+    
+    canvas.style.transform = `rotate(${currentRotation}deg)`;
+    document.getElementById("spinSound").play();
 
-const index=Math.floor(Math.random()*sectors.length);
-const arc=360/sectors.length;
-const offset=Math.random()*arc;
+    setTimeout(() => {
+        const prize = sectors[prizeIndex].v;
+        document.getElementById("result").innerHTML = `🎉 مبروك ${name} مساهمة بقيمة ${prize} جنيه`;
 
-rotation+=360*6+(360-(index*arc+offset));
-canvas.style.transform=`rotate(${rotation}deg)`;
-
-document.getElementById("spinSound").play();
-
-setTimeout(()=>{
-
-const prize=sectors[index].v;
-
-document.getElementById("result").innerHTML=
-`🎉 مبروك ${name} +${prize} جنيه`;
-
-players.push({name,prize});
-localStorage.setItem("players",JSON.stringify(players));
-
-total+=prize;
-update();
-
-confetti({particleCount:150,spread:100});
-
-saveToGoogleSheets(name,prize);
-
-spinning=false;
-
-},5000);
+        players.push({name, prize});
+        localStorage.setItem("players", JSON.stringify(players));
+        
+        updateUI();
+        confetti({particleCount: 150, spread: 70, origin: { y: 0.6 }});
+        
+        spinning = false;
+        spinBtn.disabled = false;
+        nameInput.value = "";
+    }, 5000);
 }
 
-function update(){
-const tbody=document.querySelector("#leaderboard tbody");
-tbody.innerHTML="";
+function updateUI() {
+    const tbody = document.querySelector("#leaderboard tbody");
+    tbody.innerHTML = "";
+    
+    let totalVal = 0;
+    // ترتيب من الأعلى للأحدث أو الأعلى قيمة
+    const sortedPlayers = [...players].sort((a,b) => b.prize - a.prize).slice(0, 5);
 
-players.sort((a,b)=>b.prize-a.prize).forEach((p,i)=>{
-tbody.innerHTML+=`
-<tr>
-<td><span class="badge">#${i+1}</span></td>
-<td>${p.name}</td>
-<td>${p.prize} جنيه</td>
-</tr>`;
-});
+    sortedPlayers.forEach((p, i) => {
+        tbody.innerHTML += `
+            <tr>
+                <td><span class="badge">#${i+1}</span></td>
+                <td>${p.name}</td>
+                <td style="text-align:left">${p.prize} ج</td>
+            </tr>`;
+    });
 
-document.getElementById("total").innerText=total+" جنيه";
+    players.forEach(p => totalVal += p.prize);
+    document.getElementById("total").innerText = totalVal + " جنيه";
 }
 
-function saveToGoogleSheets(name,amount){
-fetch("https://script.google.com/macros/s/AKfycbyp7pZfOVMf58eAwMBMy72mG-MW6pP4QH62SQId03Cqf8C-fZpTSaD4qDswZDyf0LxgEw/exec",{
-method:"POST",
-body:JSON.stringify({name,amount})
-});
-}
-
-update();
+updateUI();
 </script>
-
 </body>
 </html>
