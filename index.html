@@ -170,20 +170,34 @@ function updateUI() {
 }
 
 updateUI();
-  function saveToGoogleSheets(name, amount) {
-    const url = "https://script.google.com/macros/s/AKfycbyp7pZfOVMf58eAwMBMy72mG-MW6pP4QH62SQId03Cqf8C-fZpTSaD4qDswZDyf0LxgEw/exec"; 
+ const googleSheetUrl = "https://script.google.com/macros/s/AKfycbxszJKrICt784e-2q0tOkGxSOjcFZYYwrjrmuRuOS1KVfHHZteXoGsecoMrlDNetA9xgA/exec"
+async function updateUI() {
+    try {
+        // جلب البيانات من شيت جوجل
+        const response = await fetch(googleSheetUrl);
+        const cloudPlayers = await response.json();
+        
+        const tbody = document.querySelector("#leaderboard tbody");
+        tbody.innerHTML = "";
+        
+        let totalVal = 0;
+        // ترتيب المتصدرين بناءً على بيانات الشيت
+        const sortedPlayers = cloudPlayers.sort((a,b) => b.prize - a.prize).slice(0, 5);
 
-    fetch(url, {
-        method: "POST",
-        mode: "no-cors", 
-        cache: "no-cache",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name: name, amount: amount })
-    })
-    .then(() => console.log("تم الإرسال بنجاح ✅"))
-    .catch(error => console.error("خطأ في الإرسال ❌:", error));
+        sortedPlayers.forEach((p, i) => {
+            tbody.innerHTML += `
+                <tr>
+                    <td><span class="badge">#${i+1}</span></td>
+                    <td>${p.name}</td>
+                    <td style="text-align:left">${p.prize} ج</td>
+                </tr>`;
+        });
+
+        cloudPlayers.forEach(p => totalVal += Number(p.prize));
+        document.getElementById("total").innerText = totalVal + " جنيه";
+    } catch (e) {
+        console.log("جاري تحميل البيانات...");
+    }
 }  
 </script>
 </body>
